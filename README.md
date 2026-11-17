@@ -1,7 +1,10 @@
 <img width="1024" height="256" alt="image" src="https://github.com/user-attachments/assets/5bada592-80b8-4e4c-ab1e-7a3b5e776eea" />
+*该图片来源于2026 全球校园与人工智能算法精英大赛官方网站
+网址为：https://www.aicomp.cn/tracks/tracks-2
 
 本项目为 2026 全球校园与人工智能算法精英大赛 算法创新赛 算法模型创新 的参赛作品
-依照大赛要求，仅公开团队名称：WoodFormer非常棒
+依照大赛要求，本项目不包含处全队名称外的任何身份信息
+参赛团队名称：Woodformer非常棒
 
 # 木材表面缺陷检测平台
 
