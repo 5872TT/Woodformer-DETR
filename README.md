@@ -1,3 +1,4 @@
+<img width="148" height="34" alt="image" src="https://github.com/user-attachments/assets/8a4ef487-4a23-4b16-b881-e55466ffa003" />
 <img width="1024" height="256" alt="image" src="https://github.com/user-attachments/assets/5bada592-80b8-4e4c-ab1e-7a3b5e776eea" />
 *该图片来源于2026 全球校园与人工智能算法精英大赛官方网站
 网址为：https://www.aicomp.cn/tracks/tracks-2
