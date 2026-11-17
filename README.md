@@ -119,7 +119,3 @@ python RT-DETR-main/rtdetr_pytorch/tools/prepare_oulu.py --root "你的原始数
 模型代码基于 [lyuwenyu/RT-DETR](https://github.com/lyuwenyu/RT-DETR)，保留 Apache-2.0 许可证及源码版权注释。项目扩展了 FEWD 模块、数据增强、训练入口和桌面推理功能。
 
 OULU-DET 来源与下载见[作者团队发布页](https://www.triple-olab.com/oulu-wood/)。参考论文为 Luo Q 等，I²GF-Net，IEEE TIM，2024，DOI：10.1109/TIM.2024.3413144。数据集及上游预训练参数的使用条件需分别遵循各自发布者的约定。
-
-## 仓库内容
-
-说明统一保留在本 README 中；旧参考截图、Word 材料和大体积逐轮权重已清理。`.gitignore` 排除环境、缓存、数据集、运行日志和后续训练输出，仅允许 `weights/best.pt` 作为保留权重。请使用 Git 提交待跟踪文件，不要将整个工作目录（含 `.runtime`）直接打包上传。
