@@ -1,0 +1,2 @@
+__include__:
+- ../rtdetr/fewd_rtdetr_r18_ouludefect.yml

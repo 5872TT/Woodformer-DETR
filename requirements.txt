@@ -1,0 +1,10 @@
+# Install PyTorch/torchvision for your CUDA platform first; validated pair below.
+torch==2.7.1
+torchvision==0.22.1
+PyQt5==5.15.11
+numpy
+Pillow
+PyYAML
+scipy
+pycocotools==2.0.11
+transformers

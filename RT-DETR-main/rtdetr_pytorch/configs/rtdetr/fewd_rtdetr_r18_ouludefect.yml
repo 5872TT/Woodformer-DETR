@@ -1,0 +1,141 @@
+__include__: [
+  '../dataset/coco_detection.yml',
+  '../runtime.yml',
+]
+
+# FEWD-DETR reference configuration for a three-class wood-defect dataset
+# exported in COCO format. Update img_folder and ann_file before use.
+task: detection
+num_classes: 3
+# Use COCO category IDs 1, 2, 3 in this order; the repository maps these to labels 0, 1, 2.
+remap_mscoco_category: True
+output_dir: ./output/fewd_rtdetr_r18_ouludefect
+
+model: RTDETR
+criterion: SetCriterion
+postprocessor: RTDETRPostProcessor
+
+RTDETR:
+  backbone: FRepNet
+  encoder: FEWDEncoder
+  decoder: RTDETRTransformer
+  multi_scale: [640]
+
+FRepNet:
+  depth: 18
+  return_idx: [1, 2, 3]
+  freeze_at: -1
+  freeze_norm: False
+  pretrained: False
+  partial_ratio: 0.25
+
+FEWDEncoder:
+  in_channels: [128, 256, 512]
+  feat_strides: [8, 16, 32]
+  hidden_dim: 256
+  nhead: 8
+  dim_feedforward: 1024
+  dropout: 0.0
+  enc_act: gelu
+  use_encoder_idx: [2]
+  num_encoder_layers: 1
+  pe_temperature: 10000
+  expansion: 0.5
+  depth_mult: 1.0
+  act: silu
+  eval_spatial_size: [640, 640]
+
+RTDETRTransformer:
+  feat_channels: [256, 256, 256]
+  feat_strides: [8, 16, 32]
+  hidden_dim: 256
+  num_levels: 3
+  num_queries: 300
+  num_decoder_layers: 6
+  num_denoising: 100
+  eval_idx: -1
+  eval_spatial_size: [640, 640]
+
+RTDETRPostProcessor:
+  num_top_queries: 300
+
+SetCriterion:
+  weight_dict: {loss_vfl: 1, loss_bbox: 5, loss_giou: 2}
+  losses: ['vfl', 'boxes']
+  alpha: 0.75
+  gamma: 2.0
+  matcher:
+    type: HungarianMatcher
+    weight_dict: {cost_class: 2, cost_bbox: 5, cost_giou: 2}
+    alpha: 0.25
+    gamma: 2.0
+
+train_dataloader:
+  type: DataLoader
+  dataset:
+    type: CocoDetection
+    img_folder: ./dataset/ouludefect/train
+    ann_file: ./dataset/ouludefect/annotations/instances_train.json
+    return_masks: False
+    transforms:
+      type: Compose
+      ops:
+        - {type: RandomIllumination, brightness: 0.2, p: 0.5}
+        - {type: RandomContrast, contrast: 0.2, p: 0.5}
+        - {type: Resize, size: [640, 640]}
+        - {type: ToImageTensor}
+        - {type: ConvertDtype}
+        - {type: RandomGaussianNoise, p: 0.2, std: 0.02}
+        - {type: RandomSaltPepperNoise, p: 0.2, amount: 0.005}
+        - {type: SanitizeBoundingBox, min_size: 1}
+        - {type: ConvertBox, out_fmt: 'cxcywh', normalize: True}
+  shuffle: True
+  batch_size: 8
+  num_workers: 8
+  drop_last: True
+  collate_fn: default_collate_fn
+
+val_dataloader:
+  type: DataLoader
+  dataset:
+    type: CocoDetection
+    img_folder: ./dataset/ouludefect/val
+    ann_file: ./dataset/ouludefect/annotations/instances_val.json
+    return_masks: False
+    transforms:
+      type: Compose
+      ops:
+        - {type: Resize, size: [640, 640]}
+        - {type: ToImageTensor}
+        - {type: ConvertDtype}
+  shuffle: False
+  batch_size: 8
+  num_workers: 8
+  drop_last: False
+  collate_fn: default_collate_fn
+
+epoches: 80
+clip_max_norm: 0.1
+use_ema: True
+ema:
+  type: ModelEMA
+  decay: 0.9999
+  warmups: 2000
+use_amp: True
+find_unused_parameters: False
+
+optimizer:
+  type: AdamW
+  params:
+    - {params: '^(?=.*backbone)(?=.*norm).*$' , lr: 0.00001, weight_decay: 0.0}
+    - {params: '^(?=.*backbone)(?!.*norm).*$' , lr: 0.00001}
+    - {params: '^(?=.*(?:encoder|decoder))(?=.*(?:norm|bias)).*$' , weight_decay: 0.0}
+  lr: 0.0001
+  betas: [0.9, 0.999]
+  weight_decay: 0.0001
+
+lr_scheduler:
+  type: MultiStepLR
+  milestones: [1000]
+  gamma: 0.1
+
